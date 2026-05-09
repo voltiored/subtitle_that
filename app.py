@@ -70,14 +70,12 @@ html, body, [class*="css"] {
 .nbtn-pri:hover { background: #9333EA; transform: translateY(-1px); }
 
 /* ── WIDGETS Y CONTENEDORES ── */
-/* Estilo general para las tarjetas/paneles laterales */
 .panel-title {
     font-size: 0.85rem; font-weight: 600; text-transform: uppercase; 
     letter-spacing: 1px; color: #8B949E; margin-bottom: 12px;
     border-bottom: 1px solid #30363D; padding-bottom: 8px; margin-top: 24px;
 }
 
-/* File Uploader arreglado (sin texto aplastado) */
 div[data-testid="stFileUploader"] {
     background: #161B22 !important;
     border: 1px dashed #30363D !important;
@@ -88,7 +86,6 @@ div[data-testid="stFileUploader"]:hover {
     border-color: #8A2BE2 !important;
 }
 
-/* Inputs, Selects, text areas */
 div[data-testid="stSelectbox"] > div > div, 
 div[data-testid="stTextArea"] textarea {
     background: #0D1117 !important;
@@ -102,7 +99,6 @@ div[data-testid="stTextArea"] textarea:focus {
     box-shadow: 0 0 0 1px #8A2BE2 !important;
 }
 
-/* Botones principales de acción */
 .stButton > button {
     background: linear-gradient(135deg, #8A2BE2, #4169E1) !important;
     color: white !important;
@@ -126,7 +122,6 @@ div[data-testid="stDownloadButton"] > button:hover {
     background: rgba(138, 43, 226, 0.1) !important;
 }
 
-/* ── ELEMENTOS VISUALES ── */
 .seg-block {
     background: #161B22; border-radius: 8px; padding: 12px; margin-bottom: 12px;
     border-left: 3px solid #30363D; transition: border-color 0.2s;
@@ -153,12 +148,10 @@ div[data-testid="stVideo"] video {
 }
 .tips-box strong { color: #8A2BE2; }
 
-/* Labels de radio buttons y toggles */
 div[data-testid="stRadio"] label, div[data-testid="stToggle"] label, div[data-testid="stWidgetLabel"] p {
     color: #C9D1D9 !important;
     font-weight: 500 !important;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -307,7 +300,6 @@ with col_m:
 with col_r:
     st.markdown('<div class="panel-title">Estética visual</div>', unsafe_allow_html=True)
 
-    # ── AÑADIDA MONTSERRAT AQUÍ ──
     font_options = {
         "Montserrat (Moderna)": "Montserrat",
         "Sans Serif (Clásica)": "DejaVu Sans",
@@ -318,7 +310,7 @@ with col_r:
     font_label = st.selectbox("Tipografía", list(font_options.keys()))
     font_name = font_options[font_label]
 
-    font_size = st.slider("Tamaño de texto", 12, 90, 52)
+    font_size = st.slider("Tamaño de texto", 12, 120, 52)
     font_color = st.color_picker("Color principal", "#FFFFFF")
 
     bg_options = {
@@ -426,11 +418,12 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                 else:
                     ruta_ffmpeg = "ffmpeg"
 
+                # ── LÍMITES DE MEMORIA AÑADIDOS AQUÍ PARA EVITAR CAÍDAS EN LA NUBE ──
                 cmd = [
                     ruta_ffmpeg, "-y", "-i", in_name,
                     "-map", "0:v:0", "-map", "0:a:0",
                     "-filter_script:v", "filtro.txt",
-                    "-c:v", "libx264", "-crf", "22", "-preset", "fast",
+                    "-c:v", "libx264", "-crf", "24", "-preset", "ultrafast", "-threads", "2",
                     "-c:a", "aac", "-movflags", "+faststart",
                     out_name,
                 ]
@@ -454,3 +447,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             file_name="reel_subtitulado.mp4",
             mime="video/mp4",
         )
+
+# ── ETIQUETA DE CIERRE AÑADIDA PARA EVITAR BUGS VISUALES ──
+st.markdown('</div>', unsafe_allow_html=True)
